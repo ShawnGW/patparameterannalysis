@@ -174,7 +174,7 @@ public class StartDeal {
                     }
                     for (File waferRaw:entryWafer.getKey().listFiles()) {
                         FileUtils.copyFile(waferRaw,new File(backupDirectory.getPath()+"/"+waferRaw.getName()));
-//                        FileUtils.forceDelete(waferRaw);
+                        FileUtils.forceDelete(waferRaw);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
