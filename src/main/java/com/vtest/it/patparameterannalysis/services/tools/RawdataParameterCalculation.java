@@ -1,11 +1,15 @@
 package com.vtest.it.patparameterannalysis.services.tools;
 
 import com.vtest.it.patparameterannalysis.pojo.ParameterAfterCalculateResultBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class RawdataParameterCalculation implements RawdataParameterCalculationInterface {
-
+    @Autowired
+    private QuickSort quickSort;
     @Override
     public void calculate(List<Double> list, ParameterAfterCalculateResultBean parameterAfterCalculateResultBean) {
         double minValue = list.get(0);
@@ -44,8 +48,7 @@ public class RawdataParameterCalculation implements RawdataParameterCalculationI
         variance /= list.size();
         standardDeviation = Math.sqrt(variance);
         Double[] values = list.toArray(new Double[list.size()]);
-        QuickSort sort = new QuickSort();
-        sort.sort(values, 0, values.length - 1);
+        quickSort.sort(values, 0, values.length - 1);
         middleValue = values.length % 2 != 0 ? values[values.length / 2] : (double) (values[values.length / 2 - 1] + values[values.length / 2]) / 2;
         valueOfQuarter = (values.length % 2 == 0) ? ((values.length % 4 == 0) ? ((double) (values[(values.length / 2) / 2 - 1] + values[(values.length / 2) / 2]) / 2) : ((values[values.length / 4]))) : (((values.length / 2) % 2 == 0) ? (valueOfQuarter = values[values.length / 4]) : ((double) (values[values.length / 4] + values[values.length / 4 + 1]) / 2));
         valueOfThreeQuarter = (values.length % 2 == 0) ? ((values.length % 4 == 0) ? ((double) (values[(values.length / 2) / 2 - 1 + (values.length / 2)] + values[(values.length / 2) / 2 + (values.length / 2)]) / 2) : (values[3 * (values.length / 4) + 1])) : (((values.length / 2) % 2 == 0) ? (values[3 * (values.length / 4)]) : ((double) (values[3 * (values.length / 4) + 1] + values[3 * (values.length / 4) + 2]) / 2));

@@ -21,7 +21,8 @@ import java.util.*;
 public class StartDeal {
     @Autowired
     private RawdataAnnalysis rawdataAnnalysis;
-
+    @Autowired
+    private RawdataParameterCalculation rawdataParameterCalculation;
     @Scheduled(fixedDelay = 1000 * 60)
     public void deal() {
         System.out.println("start dealing...");
@@ -77,7 +78,6 @@ public class StartDeal {
                             printWriter.print("X,Y\r\n");
                             TreeMap<Integer, File> storeMap = entry.getValue();
                             rawdataAnnalysis.annalysis(storeMap, bean);
-                            RawdataParameterCalculation rawdataParameterCalculation = new RawdataParameterCalculation();
 //                            Map<String, ParameterJudgementStandardBean> parameterJudgmentStandard = new HashMap<>();
                             Map<Integer,Map<String, ParameterJudgementStandardBean>> parameterJudgmentStandardSites = new HashMap<>();
 //                            for (String parameter : bean.getParameterPassBinsCollections().keySet()) {
@@ -95,6 +95,7 @@ public class StartDeal {
 //                                parameterJudgmentStandard.put(parameter, parameterJudgementStandardBean);
 //                            }
                             for (Integer site : bean.getParameterPassBinsCollectionsBySite().keySet()) {
+                                System.err.println("site : "+site);
                                 for (String parameter : bean.getParameterPassBinsCollectionsBySite().get(site).keySet()) {
                                     ParameterAfterCalculateResultBean parameterAfterCalculateResultBean = new ParameterAfterCalculateResultBean();
                                     rawdataParameterCalculation.calculate(bean.getParameterPassBinsCollections().get(parameter), parameterAfterCalculateResultBean);
@@ -111,6 +112,7 @@ public class StartDeal {
                                         parameterJudgmentStandardSites.get(site).put(parameter, parameterJudgementStandardBean);
                                     }else {
                                         Map<String, ParameterJudgementStandardBean> parameterJudgmentStandardOneParameter = new HashMap<>();
+                                        parameterJudgmentStandardOneParameter.put(parameter, parameterJudgementStandardBean);
                                         parameterJudgmentStandardSites.put(site,parameterJudgmentStandardOneParameter);
                                     }
                                 }
@@ -140,9 +142,16 @@ public class StartDeal {
                                 List<Double> paramValueList = bean.getDieInforMap().get(dieCoordinate).getParamList();
                                 Integer site=bean.getDieInforMap().get(dieCoordinate).getSite();
                                 for (int i = 0; i < paramValueList.size(); i++) {
-                                    if (paramValueList.get(i) <parameterJudgmentStandardSites.get(site).get(paramList.get(i)).getLowLimit() || paramValueList.get(i) > parameterJudgmentStandardSites.get(site).get(paramList.get(i)).getHighLimit()) {
-                                        flag = true;
-                                        break;
+                                    try {
+                                        if (paramValueList.get(i) <parameterJudgmentStandardSites.get(site).get(paramList.get(i)).getLowLimit() || paramValueList.get(i) > parameterJudgmentStandardSites.get(site).get(paramList.get(i)).getHighLimit()) {
+                                            flag = true;
+                                            break;
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                        System.err.println(paramValueList.get(i));
+                                        System.err.println(parameterJudgmentStandardSites.get(site).get(paramList.get(i)).getLowLimit());
+                                        System.err.println(parameterJudgmentStandardSites.get(site).get(paramList.get(i)).getHighLimit());
                                     }
                                 }
                                 if (flag) {
@@ -161,7 +170,7 @@ public class StartDeal {
                     }
                     for (File waferRaw:entryWafer.getKey().listFiles()) {
                         FileUtils.copyFile(waferRaw,new File(backupDirectory.getPath()+"/"+waferRaw.getName()));
-                        FileUtils.forceDelete(waferRaw);
+//                        FileUtils.forceDelete(waferRaw);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
