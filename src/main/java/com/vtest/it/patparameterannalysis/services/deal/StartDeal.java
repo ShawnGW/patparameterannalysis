@@ -80,6 +80,7 @@ public class StartDeal {
                             rawdataAnnalysis.annalysis(storeMap, bean);
 //                            Map<String, ParameterJudgementStandardBean> parameterJudgmentStandard = new HashMap<>();
                             Map<Integer,Map<String, ParameterJudgementStandardBean>> parameterJudgmentStandardSites = new HashMap<>();
+                            /* by all compute end*/
 //                            for (String parameter : bean.getParameterPassBinsCollections().keySet()) {
 //                                ParameterAfterCalculateResultBean parameterAfterCalculateResultBean = new ParameterAfterCalculateResultBean();
 //                                rawdataParameterCalculation.calculate(bean.getParameterPassBinsCollections().get(parameter), parameterAfterCalculateResultBean);
@@ -94,8 +95,11 @@ public class StartDeal {
 //                                parameterJudgementStandardBean.setHighLimit(parameterAfterCalculateResultBean.getAverage() + 6 * ((valueOfThreeQuarter - valueOfQuarter) / 1.35));
 //                                parameterJudgmentStandard.put(parameter, parameterJudgementStandardBean);
 //                            }
+                            /* by all compute end*/
+
+
+                            /* by site start*/
                             for (Integer site : bean.getParameterPassBinsCollectionsBySite().keySet()) {
-                                System.err.println("site : "+site);
                                 for (String parameter : bean.getParameterPassBinsCollectionsBySite().get(site).keySet()) {
                                     ParameterAfterCalculateResultBean parameterAfterCalculateResultBean = new ParameterAfterCalculateResultBean();
                                     rawdataParameterCalculation.calculate(bean.getParameterPassBinsCollections().get(parameter), parameterAfterCalculateResultBean);
@@ -117,7 +121,10 @@ public class StartDeal {
                                     }
                                 }
                             }
+                            /* by site start*/
+
                             ArrayList<String> paramList = bean.getParamList();
+                            /* by all start*/
 //                            for (String dieCoordinate : bean.getDieInforMap().keySet()) {
 //                                boolean flag = false;
 //                                if (bean.getDieInforMap().get(dieCoordinate).getSoftBin() != 1) {
@@ -134,6 +141,9 @@ public class StartDeal {
 //                                    printWriter.print(dieCoordinate.split(":")[0] + "," + dieCoordinate.split(":")[1] + ",10\r\n");
 //                                }
 //                            }
+                            /* by all end*/
+
+                            /* by site start*/
                             for (String dieCoordinate : bean.getDieInforMap().keySet()) {
                                 boolean flag = false;
                                 if (bean.getDieInforMap().get(dieCoordinate).getSoftBin() != 1) {
@@ -142,22 +152,16 @@ public class StartDeal {
                                 List<Double> paramValueList = bean.getDieInforMap().get(dieCoordinate).getParamList();
                                 Integer site=bean.getDieInforMap().get(dieCoordinate).getSite();
                                 for (int i = 0; i < paramValueList.size(); i++) {
-                                    try {
-                                        if (paramValueList.get(i) <parameterJudgmentStandardSites.get(site).get(paramList.get(i)).getLowLimit() || paramValueList.get(i) > parameterJudgmentStandardSites.get(site).get(paramList.get(i)).getHighLimit()) {
-                                            flag = true;
-                                            break;
-                                        }
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                        System.err.println(paramValueList.get(i));
-                                        System.err.println(parameterJudgmentStandardSites.get(site).get(paramList.get(i)).getLowLimit());
-                                        System.err.println(parameterJudgmentStandardSites.get(site).get(paramList.get(i)).getHighLimit());
+                                    if (paramValueList.get(i) <parameterJudgmentStandardSites.get(site).get(paramList.get(i)).getLowLimit() || paramValueList.get(i) > parameterJudgmentStandardSites.get(site).get(paramList.get(i)).getHighLimit()) {
+                                        flag = true;
+                                        break;
                                     }
                                 }
                                 if (flag) {
                                     printWriter.print(dieCoordinate.split(":")[0] + "," + dieCoordinate.split(":")[1] + ",10\r\n");
                                 }
                             }
+                            /* by site end*/
                             printWriter.flush();
                             printWriter.close();
                         } catch (Exception e) {
