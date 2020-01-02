@@ -1,10 +1,15 @@
 package com.vtest.it.patparameterannalysis.services.annalysis;
 
 
-import com.vtest.it.patparameterannalysis.pojo.*;
+import com.vtest.it.patparameterannalysis.pojo.DieInfor;
+import com.vtest.it.patparameterannalysis.pojo.Parameterbean;
+import com.vtest.it.patparameterannalysis.pojo.RawdataAnalysisResultBean;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 
 @Service
@@ -175,5 +180,6 @@ public  class RawdataAnnalysis {
         bean.setParamList(paramList);
         bean.setDieInforMap(dieInforMap);
         bean.setParameterPassBinsCollectionsBySite(parameterPassBinsCollectionsBySite);
+        bean.setPassBins(passBins);
     }
 }

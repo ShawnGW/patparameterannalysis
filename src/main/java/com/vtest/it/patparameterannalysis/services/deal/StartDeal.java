@@ -23,16 +23,17 @@ public class StartDeal {
     private RawdataAnnalysis rawdataAnnalysis;
     @Autowired
     private RawdataParameterCalculation rawdataParameterCalculation;
+
     @Scheduled(fixedDelay = 1000 * 60)
     public void deal() {
         System.out.println("start dealing...");
         try {
             emptyDirectoryDelete(new File("/source"));
             File[] files = new File("/source").listFiles();
-            if (files.length==0){
+            if (files.length == 0) {
                 return;
             }
-            Map<File, waferInformation> WaferInformationMap=new HashMap<>();
+            Map<File, waferInformation> WaferInformationMap = new HashMap<>();
             for (int i = 0; i < files.length; i++) {
                 String customer = files[i].getName();
                 if (files[i].isDirectory() && files[i].listFiles().length > 0) {
@@ -48,13 +49,13 @@ public class StartDeal {
                                     for (int l = 0; l < cpProcess.length; l++) {
                                         String cpStep = cpProcess[l].getName();
                                         if (cpProcess[l].isDirectory() && cpProcess[l].listFiles().length > 0) {
-                                            waferInformation waferInformation=new waferInformation();
+                                            waferInformation waferInformation = new waferInformation();
                                             waferInformation.setCustomer(customer);
                                             waferInformation.setDevice(device);
                                             waferInformation.setLot(lot);
                                             waferInformation.setCpStep(cpStep);
                                             waferInformation.setWaferId("NA");
-                                            WaferInformationMap.put(cpProcess[l],waferInformation);
+                                            WaferInformationMap.put(cpProcess[l], waferInformation);
                                         }
                                     }
                                 }
@@ -64,22 +65,22 @@ public class StartDeal {
                 }
             }
             for (Map.Entry<File, waferInformation> entryWafer : WaferInformationMap.entrySet()) {
-                if (!fileGenerateTimeCheck(entryWafer.getKey().listFiles())){
+                if (!fileGenerateTimeCheck(entryWafer.getKey().listFiles())) {
                     continue;
                 }
                 try {
                     Map<String, TreeMap<Integer, File>> map = GetParameterList.getList(entryWafer.getKey());
-                    waferInformation waferInformation=entryWafer.getValue();
+                    waferInformation waferInformation = entryWafer.getValue();
                     for (Map.Entry<String, TreeMap<Integer, File>> entry : map.entrySet()) {
                         try {
                             RawdataAnalysisResultBean bean = new RawdataAnalysisResultBean();
                             String waferId = entry.getKey();
-                            PrintWriter printWriter = new PrintWriter(new File("/target/"+waferInformation.getCustomer()+"_"+waferInformation.getDevice()+"_" +waferInformation.getLot()+ "_" + waferId + "_CP1_V186.csv"));
+                            PrintWriter printWriter = new PrintWriter(new File("/target/" + waferInformation.getCustomer() + "_" + waferInformation.getDevice() + "_" + waferInformation.getLot() + "_" + waferId + "_CP1_V186.csv"));
                             printWriter.print("X,Y\r\n");
                             TreeMap<Integer, File> storeMap = entry.getValue();
                             rawdataAnnalysis.annalysis(storeMap, bean);
 //                            Map<String, ParameterJudgementStandardBean> parameterJudgmentStandard = new HashMap<>();
-                            Map<Integer,Map<String, ParameterJudgementStandardBean>> parameterJudgmentStandardSites = new HashMap<>();
+                            Map<Integer, Map<String, ParameterJudgementStandardBean>> parameterJudgmentStandardSites = new HashMap<>();
                             /* by all compute end*/
 //                            for (String parameter : bean.getParameterPassBinsCollections().keySet()) {
 //                                ParameterAfterCalculateResultBean parameterAfterCalculateResultBean = new ParameterAfterCalculateResultBean();
@@ -102,7 +103,7 @@ public class StartDeal {
                             for (Integer site : bean.getParameterPassBinsCollectionsBySite().keySet()) {
                                 for (String parameter : bean.getParameterPassBinsCollectionsBySite().get(site).keySet()) {
                                     ParameterAfterCalculateResultBean parameterAfterCalculateResultBean = new ParameterAfterCalculateResultBean();
-                                    rawdataParameterCalculation.calculate(bean.getParameterPassBinsCollections().get(parameter), parameterAfterCalculateResultBean);
+                                    rawdataParameterCalculation.calculate(bean.getParameterPassBinsCollectionsBySite().get(site).get(parameter), parameterAfterCalculateResultBean);
                                     parameterAfterCalculateResultBean.setLowLimit(bean.getParameterInfors().get(parameter).getLowLimit());
                                     parameterAfterCalculateResultBean.setHighLimit(bean.getParameterInfors().get(parameter).getHighLimit());
                                     parameterAfterCalculateResultBean.setUnit(bean.getParameterInfors().get(parameter).getUnit());
@@ -111,13 +112,13 @@ public class StartDeal {
                                     double valueOfThreeQuarter = parameterAfterCalculateResultBean.getValueOfThreeQuarter();
                                     double valueOfQuarter = parameterAfterCalculateResultBean.getValueOfQuarter();
                                     parameterJudgementStandardBean.setLowLimit(parameterAfterCalculateResultBean.getMiddleValue() - 6 * ((valueOfThreeQuarter - valueOfQuarter) / 1.35));
-                                    parameterJudgementStandardBean.setHighLimit(parameterAfterCalculateResultBean.getAverage() + 6 * ((valueOfThreeQuarter - valueOfQuarter) / 1.35));
-                                    if (parameterJudgmentStandardSites.containsKey(site)){
+                                    parameterJudgementStandardBean.setHighLimit(parameterAfterCalculateResultBean.getMiddleValue() + 6 * ((valueOfThreeQuarter - valueOfQuarter) / 1.35));
+                                    if (parameterJudgmentStandardSites.containsKey(site)) {
                                         parameterJudgmentStandardSites.get(site).put(parameter, parameterJudgementStandardBean);
-                                    }else {
+                                    } else {
                                         Map<String, ParameterJudgementStandardBean> parameterJudgmentStandardOneParameter = new HashMap<>();
                                         parameterJudgmentStandardOneParameter.put(parameter, parameterJudgementStandardBean);
-                                        parameterJudgmentStandardSites.put(site,parameterJudgmentStandardOneParameter);
+                                        parameterJudgmentStandardSites.put(site, parameterJudgmentStandardOneParameter);
                                     }
                                 }
                             }
@@ -146,13 +147,13 @@ public class StartDeal {
                             /* by site start*/
                             for (String dieCoordinate : bean.getDieInforMap().keySet()) {
                                 boolean flag = false;
-                                if (bean.getDieInforMap().get(dieCoordinate).getSoftBin() != 1) {
+                                if (!bean.getPassBins().contains(bean.getDieInforMap().get(dieCoordinate).getSoftBin() + "")) {
                                     continue;
                                 }
                                 List<Double> paramValueList = bean.getDieInforMap().get(dieCoordinate).getParamList();
-                                Integer site=bean.getDieInforMap().get(dieCoordinate).getSite();
+                                Integer site = bean.getDieInforMap().get(dieCoordinate).getSite();
                                 for (int i = 0; i < paramValueList.size(); i++) {
-                                    if (paramValueList.get(i) <parameterJudgmentStandardSites.get(site).get(paramList.get(i)).getLowLimit() || paramValueList.get(i) > parameterJudgmentStandardSites.get(site).get(paramList.get(i)).getHighLimit()) {
+                                    if (paramValueList.get(i) < parameterJudgmentStandardSites.get(site).get(paramList.get(i)).getLowLimit() || paramValueList.get(i) > parameterJudgmentStandardSites.get(site).get(paramList.get(i)).getHighLimit()) {
                                         flag = true;
                                         break;
                                     }
@@ -168,12 +169,12 @@ public class StartDeal {
                             e.printStackTrace();
                         }
                     }
-                    File backupDirectory=new File("/backup/"+waferInformation.getCustomer()+"/"+waferInformation.getDevice()+"/"+waferInformation.getLot()+"/"+waferInformation.getCpStep());
-                    if (!backupDirectory.exists()){
+                    File backupDirectory = new File("/backup/" + waferInformation.getCustomer() + "/" + waferInformation.getDevice() + "/" + waferInformation.getLot() + "/" + waferInformation.getCpStep());
+                    if (!backupDirectory.exists()) {
                         backupDirectory.mkdirs();
                     }
-                    for (File waferRaw:entryWafer.getKey().listFiles()) {
-                        FileUtils.copyFile(waferRaw,new File(backupDirectory.getPath()+"/"+waferRaw.getName()));
+                    for (File waferRaw : entryWafer.getKey().listFiles()) {
+                        FileUtils.copyFile(waferRaw, new File(backupDirectory.getPath() + "/" + waferRaw.getName()));
                         FileUtils.forceDelete(waferRaw);
                     }
                 } catch (Exception e) {
@@ -188,8 +189,7 @@ public class StartDeal {
     public void emptyDirectoryDelete(File file) {
         if (file.isDirectory()) {
             if (file.listFiles().length == 0) {
-                if (file.getName().equals("source"))
-                {
+                if (file.getName().equals("source")) {
                     return;
                 }
                 try {
@@ -205,11 +205,12 @@ public class StartDeal {
             }
         }
     }
-    public boolean fileGenerateTimeCheck(File[] files){
-        long now=System.currentTimeMillis();
+
+    public boolean fileGenerateTimeCheck(File[] files) {
+        long now = System.currentTimeMillis();
         for (int i = 0; i < files.length; i++) {
-            if (!((now-files[i].lastModified())/1000>60*2)){
-                return  false;
+            if (!((now - files[i].lastModified()) / 1000 > 60 * 2)) {
+                return false;
             }
         }
         return true;

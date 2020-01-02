@@ -1,10 +1,7 @@
 package com.vtest.it.patparameterannalysis.pojo;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class RawdataAnalysisResultBean implements Serializable {
     private static final long serialVersionUID=1l;
@@ -15,6 +12,8 @@ public class RawdataAnalysisResultBean implements Serializable {
     private Map<Integer,Map<String, List<Double>>> parameterPassBinsCollectionsBySite;
     private ArrayList<String> paramList;
     private Map<String, DieInfor> dieInforMap;
+    private Set<String> passBins;
+
 
     public HashMap<String, String> getWaferInfors() {
         return waferInfors;
@@ -70,5 +69,13 @@ public class RawdataAnalysisResultBean implements Serializable {
 
     public void setParameterPassBinsCollectionsBySite(Map<Integer, Map<String, List<Double>>> parameterPassBinsCollectionsBySite) {
         this.parameterPassBinsCollectionsBySite = parameterPassBinsCollectionsBySite;
+    }
+
+    public Set<String> getPassBins() {
+        return passBins;
+    }
+
+    public void setPassBins(Set<String> passBins) {
+        this.passBins = passBins;
     }
 }
