@@ -11,6 +11,7 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -79,7 +80,7 @@ public class StartDeal {
                             printWriter.print("X,Y\r\n");
                             TreeMap<Integer, File> storeMap = entry.getValue();
                             rawdataAnnalysis.annalysis(storeMap, bean);
-//                            Map<String, ParameterJudgementStandardBean> parameterJudgmentStandard = new HashMap<>();
+//                            Map<String, ParameterJudgementStanda   rdBean> parameterJudgmentStandard = new HashMap<>();
                             Map<Integer, Map<String, ParameterJudgementStandardBean>> parameterJudgmentStandardSites = new HashMap<>();
                             /* by all compute end*/
 //                            for (String parameter : bean.getParameterPassBinsCollections().keySet()) {

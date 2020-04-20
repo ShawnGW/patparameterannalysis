@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 public class DieInfor implements Serializable {
-    private static final long serialVersionUID=1l;
+    private static final long serialVersionUID=1L;
     private int coordinateX;
     private int coordinateY;
     private int hardBin;
@@ -59,4 +59,5 @@ public class DieInfor implements Serializable {
     public void setParamList(List<Double> paramList) {
         this.paramList = paramList;
     }
+
 }
